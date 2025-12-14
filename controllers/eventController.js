@@ -1,5 +1,10 @@
+// CONTROLADOR DE EVENTOS
+// Contiene la lógica de negocio de los endpoints de eventos:
+// listado, detalle, creación, inscripción de asistentes y cálculo de ganancias
+
 const Event = require("../models/eventModels");
 
+// Obtener los eventos en los que participa el usuario autenticado (req.user viene del middleware JWT)
 const getMyEvents = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -19,6 +24,7 @@ const getMyEvents = async (req, res) => {
   }
 };
 
+// Añadir el usuario autenticado como asistente a un evento (sin duplicados)
 const addUserToEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -31,6 +37,7 @@ const addUserToEvent = async (req, res) => {
         .json({ status: "error", message: "Evento no encontrado" });
     }
 
+    // Evitar que el mismo usuario se registre más de una vez
     const alreadyIn = event.attendees.some((id) => id.toString() === userId);
     if (alreadyIn) {
       return res.status(400).json({
@@ -56,14 +63,17 @@ const addUserToEvent = async (req, res) => {
   }
 };
 
+// Crear un evento (campos obligatorios según el modelo)
 const createEvent = async (req, res) => {
   try {
-    const { title, description, date, price } = req.body;
+    const { title, description, date, location, price } = req.body;
 
-    if (!title || !description || !date || price === undefined) {
+    // Validación mínima para no crear eventos incompletos
+    if (!title || !description || !date || !location || price === undefined) {
       return res.status(400).json({
         status: "error",
-        message: "Faltan campos obligatorios: title, description, date, price",
+        message:
+          "Faltan campos obligatorios: title, description, date, location, price",
       });
     }
 
@@ -71,6 +81,7 @@ const createEvent = async (req, res) => {
       title,
       description,
       date,
+      location,
       price,
       attendees: [],
     });
@@ -89,6 +100,7 @@ const createEvent = async (req, res) => {
   }
 };
 
+// Obtener todos los eventos
 const getAllEvents = async (req, res) => {
   try {
     const events = await Event.find();
@@ -107,6 +119,7 @@ const getAllEvents = async (req, res) => {
   }
 };
 
+// Obtener un evento por ID
 const getEventById = async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -133,6 +146,7 @@ const getEventById = async (req, res) => {
   }
 };
 
+// Calcular las ganancias de un evento (precio * nº asistentes)
 const getEventEarnings = async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -167,6 +181,7 @@ const getEventEarnings = async (req, res) => {
   }
 };
 
+// Calcular las ganancias totales sumando las ganancias de todos los eventos
 const getTotalEarnings = async (req, res) => {
   try {
     const events = await Event.find();

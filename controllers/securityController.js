@@ -1,11 +1,16 @@
+// CONTROLADOR DE SEGURIDAD
+// Contiene la lógica de autenticación (login) y generación de JWT
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModels");
 
+// Login: valida credenciales y devuelve un token JWT
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Validación mínima del body
     if (!email || !password) {
       return res.status(400).json({
         status: "error",
@@ -13,9 +18,8 @@ const login = async (req, res) => {
       });
     }
 
+    // Buscar usuario por email
     const user = await User.findOne({ email });
-    console.log("LOGIN email recibido =>", JSON.stringify(email));
-    console.log("LOGIN user encontrado? =>", !!user);
     if (!user) {
       return res.status(401).json({
         status: "error",
@@ -23,6 +27,7 @@ const login = async (req, res) => {
       });
     }
 
+    // Comparar contraseña en texto plano con el hash guardado en BBDD
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({
@@ -31,6 +36,7 @@ const login = async (req, res) => {
       });
     }
 
+    // Generar token con datos mínimos necesarios
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
