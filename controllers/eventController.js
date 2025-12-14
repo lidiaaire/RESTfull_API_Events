@@ -1,0 +1,60 @@
+const Event = require("../models/eventModels");
+
+const getMyEvents = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const events = await Event.find({ attendee: userId });
+
+    return res.status(200).json({
+      status: "success",
+      results: events.length,
+      data: events,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      message: "Error al obtener los eventos del usuario",
+      error: error.message,
+    });
+  }
+};
+
+const addUserToEvent = async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const userId = req.user.id;
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({
+        status: "error",
+        message: "Evento no encontrado",
+      });
+    }
+
+    if (event.attendee.includes(userId)) {
+      return res.status(400).json({
+        status: "error",
+        message: "El usuario ya está registrado en este evento",
+      });
+    }
+
+    event.attendee.push(userId);
+    await event.save();
+
+    return res.status(200).json({
+      status: "success",
+      message: "Usuario añadido al evento correctamente",
+      data: event,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      message: "Error al añadir el usuario al evento",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { getMyEvents, addUserToEvent };
