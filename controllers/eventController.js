@@ -3,8 +3,7 @@ const Event = require("../models/eventModels");
 const getMyEvents = async (req, res) => {
   try {
     const userId = req.user.id;
-
-    const events = await Event.find({ attendee: userId });
+    const events = await Event.find({ attendees: userId });
 
     return res.status(200).json({
       status: "success",
@@ -22,25 +21,25 @@ const getMyEvents = async (req, res) => {
 
 const addUserToEvent = async (req, res) => {
   try {
-    const eventId = req.params.eventId;
+    const { eventId } = req.params;
     const userId = req.user.id;
-    const event = await Event.findById(eventId);
 
+    const event = await Event.findById(eventId);
     if (!event) {
-      return res.status(404).json({
-        status: "error",
-        message: "Evento no encontrado",
-      });
+      return res
+        .status(404)
+        .json({ status: "error", message: "Evento no encontrado" });
     }
 
-    if (event.attendee.includes(userId)) {
+    const alreadyIn = event.attendees.some((id) => id.toString() === userId);
+    if (alreadyIn) {
       return res.status(400).json({
         status: "error",
         message: "El usuario ya está registrado en este evento",
       });
     }
 
-    event.attendee.push(userId);
+    event.attendees.push(userId);
     await event.save();
 
     return res.status(200).json({

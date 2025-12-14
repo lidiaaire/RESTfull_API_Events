@@ -14,6 +14,8 @@ const login = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
+    console.log("LOGIN email recibido =>", JSON.stringify(email));
+    console.log("LOGIN user encontrado? =>", !!user);
     if (!user) {
       return res.status(401).json({
         status: "error",
@@ -21,16 +23,18 @@ const login = async (req, res) => {
       });
     }
 
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(401).json({
+        status: "error",
+        message: "Credenciales incorrectas",
+      });
+    }
+
     const token = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-        role: user.role,
-      },
+      { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "2h",
-      }
+      { expiresIn: "2h" }
     );
 
     return res.status(200).json({
