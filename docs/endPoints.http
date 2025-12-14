@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:3000
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2U4Mzg3NTcyZGI3ZGIwMDA0ZmY0MCIsImVtYWlsIjoibGlkaWFAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NjU3MDQ1OTgsImV4cCI6MTc2NTcxMTc5OH0.1deyTCeB0LufTrFGFMGXWR0NNduAW3qKWwZu4KpUegM Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2U4Mzg3NTcyZGI3ZGIwMDA0ZmY0MCIsImVtYWlsIjoibGlkaWFAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NjU3MDQ1OTgsImV4cCI6MTc2NTcxMTc5OH0.1deyTCeB0LufTrFGFMGXWR0NNduAW3qKWwZu4KpUegM Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2U4Mzg3NTcyZGI3ZGIwMDA0ZmY0MCIsImVtYWlsIjoibGlkaWFAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NjU3MDQ1OTgsImV4cCI6MTc2NTcxMTc5OH0.1deyTCeB0LufTrFGFMGXWR0NNduAW3qKWwZu4KpUegM Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2U4Mzg3NTcyZGI3ZGIwMDA0ZmY0MCIsImVtYWlsIjoibGlkaWFAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NjU3MDQ1OTgsImV4cCI6MTc2NTcxMTc5OH0.1deyTCeB0LufTrFGFMGXWR0NNduAW3qKWwZu4KpUegM Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2U4Mzg3NTcyZGI3ZGIwMDA0ZmY0MCIsImVtYWlsIjoibGlkaWFAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NjU3MDQ1OTgsImV4cCI6MTc2NTcxMTc5OH0.1deyTCeB0LufTrFGFMGXWR0NNduAW3qKWwZu4KpUegM Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2U4Mzg3NTcyZGI3ZGIwMDA0ZmY0MCIsImVtYWlsIjoibGlkaWFAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NjU3MDQ1OTgsImV4cCI6MTc2NTcxMTc5OH0.1deyTCeB0LufTrFGFMGXWR0NNduAW3qKWwZu4KpUegM 
+### LOGIN
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "lidia@gmail.com",
+  "password": "1234"
+}
+
+### GET - TODOS LOS EVENTOS
+GET {{baseUrl}}/events
+
+### GET - EVENTO POR ID
+@eventId = 693e871dd5e3f9213db4df80
+GET {{baseUrl}}/events/{{eventId}}
+
+### GET - MIS EVENTOS (AUTH)
+GET {{baseUrl}}/events/my-events
+Authorization: {{token}}
+
+### GET - GANANCIAS DE UN EVENTO
+GET {{baseUrl}}/events/{{eventId}}/earnings
+
+### GET - GANANCIAS TOTALES
+GET {{baseUrl}}/events/earnings/total
+
+### POST - CREAR EVENTO
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "title": "Evento prueba",
+  "description": "Evento para testear asistentes",
+  "date": "2025-12-20T12:00:00.000Z",
+  "price": 10
+}
+
+### POST - AÑADIR ASISTENTE (AUTH)
+POST {{baseUrl}}/events/{{eventId}}/attendees
+Authorization: {{token}}
